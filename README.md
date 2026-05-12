@@ -3,27 +3,33 @@
 ![Python](https://img.shields.io/badge/Python-3.11-blue)
 ![TensorFlow](https://img.shields.io/badge/TensorFlow-2.x-orange)
 ![OpenCV](https://img.shields.io/badge/OpenCV-4.x-green)
-![Domain](https://img.shields.io/badge/Domain-Entertainment-red)
-![Project](https://img.shields.io/badge/GUVI-HCL%20Final%20Project-purple)
+![Streamlit](https://img.shields.io/badge/Streamlit-1.x-red)
+![Domain](https://img.shields.io/badge/Domain-Entertainment-purple)
+![Project](https://img.shields.io/badge/GUVI-HCL%20Final%20Project-darkblue)
+
+---
+
+## 🎥 Demo Video
+[▶ Watch Live Demo](https://www.loom.com/share/3be894747a1d421185fae22f73799209)
 
 ---
 
 ## 📌 Project Overview
 
-**Scene Cast AI** is a deep learning-based face segmentation system that automatically 
-detects and segments faces in movie scene screenshots. The system enables a 
-pause-and-identify feature for streaming platforms where users can instantly view 
+**Scene Cast AI** is a deep learning-based face segmentation system that automatically
+detects and segments faces in movie scene screenshots. The system enables a
+pause-and-identify feature for streaming platforms where users can instantly view
 cast and crew details for actors visible on screen.
 
-This project was built as the **Final Capstone Project** for the 
+This project was built as the **Final Capstone Project** for the
 **GUVI HCL Data Analytics Certification** (IIT Madras Incubated, NASSCOM Approved).
 
 ---
 
 ## 🎯 Problem Statement
 
-Company X's streaming app needs to automatically detect and segment faces in movie 
-scene screenshots so users can pause videos and instantly view cast/crew details 
+Company X's streaming app needs to automatically detect and segment faces in movie
+scene screenshots so users can pause videos and instantly view cast/crew details
 for actors on screen.
 
 ---
@@ -48,6 +54,7 @@ for actors on screen.
 | Visualization | Matplotlib, Seaborn |
 | Augmentation | Albumentations |
 | Evaluation | Scikit-learn |
+| Web Application | Streamlit |
 | Environment | Google Colab (GPU) |
 
 ---
@@ -66,8 +73,11 @@ for actors on screen.
 
 ## 📂 Project Structure
 ├── notebook.ipynb           # Complete pipeline — EDA, training, evaluation
+├── app.py                   # Streamlit web application
 ├── requirements.txt         # All dependencies
 └── README.md                # Project documentation
+
+---
 
 ## 🔄 Approach
 
@@ -143,6 +153,16 @@ def combined_loss(y_true, y_pred):
 | LR Reduce Factor | 0.3 |
 | Checkpointing | Best val_dice saved |
 
+### Step 7 — Streamlit Web Application
+Built a fully interactive web app with:
+- **Image Upload**: Upload any movie scene JPG/PNG
+- **Face Segmentation**: Real-time predicted mask visualization
+- **Bounding Boxes**: Green boxes drawn around each detected face
+- **Performance Dashboard**: Inference speed, faces detected, face coverage
+- **Download Detection Log**: Export results as CSV
+- **Download Result Image**: Save annotated output image
+- **Model Performance Summary**: Comparison table of all 4 models
+
 ---
 
 ## 📊 Model Comparison Results
@@ -156,7 +176,7 @@ def combined_loss(y_true, y_pred):
 
 ---
 
-## 🎯 Final Evaluation Metrics (Best Model — MobileNetV2 U-Net)
+## 🎯 Final Evaluation Metrics
 
 | Metric | Score | Target |
 |--------|-------|--------|
@@ -169,33 +189,49 @@ def combined_loss(y_true, y_pred):
 
 ## 🔍 Key Observations & Hyperparameter Analysis
 
-1. **Dataset size was the primary bottleneck** — With only 409 images, 
-   train dice reached 0.91 confirming models learn the task well, 
+1. **Dataset size was the primary bottleneck** — With only 409 images,
+   train dice reached 0.91 confirming models learn the task well,
    but validation dice capped at ~0.68 due to overfitting
 
-2. **Pretrained encoders outperformed custom architecture** — MobileNetV2 
-   (0.679) and VGG16 (0.672) both beat Custom U-Net (0.594), 
+2. **Pretrained encoders outperformed custom architecture** — MobileNetV2
+   (0.679) and VGG16 (0.672) both beat Custom U-Net (0.594),
    proving transfer learning value on small datasets
 
-3. **Augmentation helped but had limits** — Albumentations 3× augmentation 
-   reduced overfitting gap but didn't significantly push val_dice higher, 
+3. **Augmentation helped but had limits** — Albumentations 3× augmentation
+   reduced overfitting gap but didn't significantly push val_dice higher,
    suggesting more diverse original data is the real need
 
-4. **Fine-tuning encoder did not improve results** — Fine-tuning VGG16 top 
-   layers with LR=1e-5 actually dropped val_dice from 0.672 to 0.652, 
-   indicating frozen pretrained features were more useful than fine-tuned ones 
-   for this small dataset
+4. **Fine-tuning encoder did not improve results** — Fine-tuning VGG16 top
+   layers with LR=1e-5 dropped val_dice from 0.672 to 0.652,
+   indicating frozen pretrained features were more useful for this small dataset
 
-5. **Combined loss (Dice + BCE) was more stable** than Dice loss alone — 
+5. **Combined loss (Dice + BCE) was more stable** than Dice loss alone —
    BCE prevented training instability in early epochs
 
-6. **Early stopping consistently triggered at 16–25 epochs** — 
-   Higher patience (15) did not yield better results, 
+6. **Early stopping consistently triggered at 16–25 epochs** —
+   Higher patience did not yield better results,
    confirming models plateau early with limited data
 
-7. **Inference speed of 237ms** exceeds 100ms target for single-image 
-   CPU prediction — batch inference or GPU deployment would 
+7. **Inference speed of 237ms** exceeds 100ms target for single-image
+   CPU prediction — batch inference or GPU deployment would
    bring this well under 100ms
+
+---
+
+## 🖥️ Streamlit App Features
+
+| Feature | Description |
+|---------|-------------|
+| Image Upload | Supports JPG, PNG up to 200MB |
+| Detection Threshold | Adjustable slider (0.1–0.9) |
+| Predicted Mask | Grayscale visualization of face regions |
+| Detected Faces | Bounding boxes with face labels |
+| Faces Detected | Count of faces found |
+| Inference Speed | Time taken in milliseconds |
+| Face Coverage | % of image covered by faces |
+| Download Log | Export detection results as CSV |
+| Download Image | Save annotated result image |
+| Model Summary | Performance table of all models |
 
 ---
 
@@ -209,11 +245,26 @@ cd Face-Segmentation-Movie-Cast
 # Install dependencies
 pip install -r requirements.txt
 
-# Open notebook
-jupyter notebook notebook.ipynb
+# Run Streamlit app
+streamlit run app.py
 ```
 
 ---
+
+## 📦 Requirements
+tensorflow>=2.10.0
+opencv-python
+streamlit
+numpy
+pandas
+matplotlib
+seaborn
+scikit-learn
+Pillow
+albumentations
+
+---
+
 ## 🚀 Future Improvements
 
 - Collect larger dataset (5000+ images) for better generalization
@@ -226,8 +277,8 @@ jupyter notebook notebook.ipynb
 
 ## 👩‍💻 Author
 
-**Tania Banerjee**  
-Senior Associate — Order Management | Aspiring Data Analyst  
+**Tania Banerjee**
+Senior Associate — Order Management | Aspiring Data Analyst
 📍 Kolkata, India
 
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-blue)](https://www.linkedin.com/in/tania-banerjee-409774261)
@@ -237,5 +288,5 @@ Senior Associate — Order Management | Aspiring Data Analyst
 
 ## 📜 Disclaimer
 
-This project was completed as part of the GUVI HCL Data Analytics Certification 
+This project was completed as part of the GUVI HCL Data Analytics Certification
 program. All code is original work by the author.
