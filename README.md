@@ -174,7 +174,13 @@ Built a fully interactive web app with:
 | VGG16 U-Net | 0.672 | 0.466 | 10 | 25 | Albumentations 3x | Frozen |
 | VGG16 Fine-tuned | 0.652 | 0.470 | 7 | 17 | Albumentations 3x | Partial |
 
----
+## 📸 Sample Predictions
+
+### Face Detection Result
+![Sample Predictions](sample_predictions.png)
+
+### Performance Dashboard
+![Performance Dashboard](performance_dashboard.png)
 
 ## 🎯 Final Evaluation Metrics
 
